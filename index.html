@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infografía Normas de Clase - Minimalista con Íconos y Efecto Modal</title>
+    <style>
+        /* --- Configuración General y Tipografía --- */
+        :root {
+            --bg-color: #202124;
+            --text-primary: #333333;
+            --text-secondary: #555555;
+            --accent-blue: #8ab6d6;
+            --accent-teal: #7fb5a8;
+            --accent-gold: #d4b483;
+            --accent-coral: #dba39a;
+            --accent-purple: #bca0bc;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+            margin: 0;
+            padding: 2vh 2vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        /* --- Contenedor Principal 16:9 --- */
+        .infographic-container {
+            container-type: inline-size;
+            width: 100%;
+            max-width: 1600px;
+            aspect-ratio: 16 / 9;
+            background-color: #ffffff;
+            padding: 4cqw 5cqw;
+            border-radius: 1.5cqw;
+            box-shadow: 0 2cqw 5cqw rgba(0,0,0,0.4);
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            position: relative; /* Necesario para contener el modal dentro de la pantalla */
+            overflow: hidden; /* Mantiene el fondo oscuro dentro de los bordes redondeados */
+        }
+
+        h1 {
+            text-align: center;
+            font-weight: 300;
+            font-size: 3.8cqw;
+            margin: 0 0 1.5cqw 0;
+            letter-spacing: 0.1cqw;
+            position: relative;
+        }
+
+        h1::after {
+            content: '';
+            display: block;
+            width: 8cqw;
+            height: 0.4cqw;
+            background: linear-gradient(to right, var(--accent-blue), var(--accent-coral));
+            margin: 0.6cqw auto 0;
+            border-radius: 0.2cqw;
+        }
+
+        /* --- Estructura de Lista de Normas --- */
+        .rules-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: repeat(5, 1fr);
+            gap: 0.6cqw 3cqw;
+            flex-grow: 1;
+        }
+
+        /* --- Tarjeta Individual de Norma --- */
+        .rule-item {
+            display: flex;
+            align-items: center;
+            padding: 0.6cqw 1.2cqw;
+            border-radius: 1cqw;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+            background-color: transparent;
+            border: 1px solid transparent;
+            cursor: pointer; /* Cursor de "clic" */
+        }
+        
+        .rule-item:hover {
+             background-color: #fafaf8;
+             transform: translateY(-2px);
+             box-shadow: 0 1cqw 2cqw rgba(0,0,0,0.03);
+        }
+
+        /* --- El elemento "Artístico" --- */
+        .art-marker {
+            flex-shrink: 0;
+            width: 4cqw;
+            height: 4cqw;
+            margin-right: 1.5cqw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0.9;
+        }
+
+        .art-marker svg {
+            width: 2cqw;
+            height: 2cqw;
+            stroke: #ffffff;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* --- Contenido de Texto --- */
+        .content {
+            flex-grow: 1;
+            padding-top: 0;
+        }
+
+        .rule-title {
+            font-size: 1.4cqw;
+            font-weight: 600;
+            margin: 0 0 0.2cqw 0;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+
+        .consequence {
+            font-size: 1.15cqw;
+            color: var(--text-secondary);
+            margin: 0;
+            display: flex;
+            align-items: baseline;
+            line-height: 1.3;
+        }
+
+        .arrow-icon {
+            margin-right: 0.5cqw;
+            font-weight: bold;
+            color: #ccc;
+            font-size: 1.3cqw;
+        }
+
+        /* --- Variaciones de Color y Forma --- */
+        .c1 { background-color: var(--accent-blue); }
+        .c2 { background-color: var(--accent-teal); }
+        .c3 { background-color: var(--accent-gold); }
+        .c4 { background-color: var(--accent-coral); }
+        .c5 { background-color: var(--accent-purple); }
+        
+        .s1 { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+        .s2 { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+        .s3 { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+        .s4 { border-radius: 50% 50% 30% 70% / 70% 40% 60% 30%; }
+
+        /* =======================================================
+           ESTILOS PARA EL EFECTO DE CARTA AMPLIADA (MODAL)
+           ======================================================= */
+        .modal-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255, 255, 255, 0.85); /* Fondo semitransparente que oculta el resto */
+            backdrop-filter: blur(4px);
+            z-index: 10;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background: #ffffff;
+            padding: 4cqw 5cqw;
+            border-radius: 2cqw;
+            z-index: 11;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Efecto de rebote (pop) */
+            display: flex;
+            align-items: center;
+            width: 75%; /* Ocupará gran parte de la pantalla */
+            box-shadow: 0 4cqw 12cqw rgba(0,0,0,0.15);
+            cursor: pointer; /* Indica que se puede clickear para cerrar */
+        }
+
+        .modal-content.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* Ajustes internos para que todo se vea gigante dentro del modal */
+        .modal-content .art-marker {
+            width: 14cqw;
+            height: 14cqw;
+            margin-right: 4cqw;
+        }
+
+        .modal-content .art-marker svg {
+            width: 7cqw;
+            height: 7cqw;
+        }
+
+        .modal-content .rule-title {
+            font-size: 3.5cqw;
+            margin-bottom: 1.5cqw;
+            line-height: 1.1;
+        }
+
+        .modal-content .consequence {
+            font-size: 2.2cqw;
+            line-height: 1.4;
+        }
+
+        .modal-content .arrow-icon {
+            font-size: 2.5cqw;
+            margin-right: 1cqw;
+        }
+    </style>
+</head>
+<body>
+
+<div class="infographic-container">
+    <h1>Acuerdos de la clase de música</h1>
+
+    <div class="rules-list">
+
+        <!-- Norma 1 -->
+        <div class="rule-item">
+            <div class="art-marker c1 s1">
+                <svg viewBox="0 0 24 24">
+                    <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+                    <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+                </svg>
+            </div>
+            <div class="content">
+                <h3 class="rule-title">Escuchamos antes de tocar.</h3>
+                <p class="consequence"><span class="arrow-icon">→</span> Si alguien interrumpe constantemente, pierde su turno de instrumento.</p>
+            </div>
+        </div>
+
+        <!-- Norma 2 -->
+        <div class="rule-item">
+            <div class="art-marker c2 s2">
+                <svg viewBox="0 0 24 24">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                </svg>
+            </div>
+            <div class="content">
+                <h3 class="rule-title">Cuidamos los instrumentos.</h3>
+                <p class="consequence"><span class="arrow-icon">→</span> El mal uso implica cambiar a un instrumento alternativo o actividad escrita.</p>
+            </div>
+        </div>
+
+        <!-- Norma 3 -->
+        <div class="rule-item">
+            <div class="art-marker c3 s3">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+            </div>
+            <div class="content">
+                <h3 class="rule-title">Respetamos el turno musical.</h3>
+                <p class="consequence"><span class="arrow-icon">→</span> Si no se respeta, el grupo vuelve a empezar.</p>
+            </div>
+        </div>
+
+        <!-- Norma 4 -->
+        <div class="rule-item">
+            <div class="art-marker c4 s4">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+                    <line x1="9" y1="9" x2="9.01" y2="9"></line>
+                    <line x1="15" y1="9" x2="15.01" y2="9"></line>
+                </svg>
+            </div>
+            <div class="content">
+                <h3 class="rule-title">No nos burlamos de las ideas de otros.</h3>
+                <p class="consequence"><span class="arrow-icon">→</span> La burla implica conversación inmediata y trabajo individual.</p>
+            </div>
+        </div>
+
+        <!-- Norma 5 -->
+        <div class="rule-item">
+            <div class="art-marker c5 s2">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polygon points="10 8 16 12 10 16 10 8"></polygon>
+                </svg>
+            </div>
+            <div class="content">
+                <h3 class="rule-title">Seguimos las señales de inicio y cierre.</h3>
+                <p class="consequence"><span class="arrow-icon">→</span> Si no se respetan, se repite la rutina hasta lograrlo correctamente.</p>
+            </div>
+        </div>
+
+        <!-- Norma 6 -->
+        <div class="rule-item">
+            <div class="art-marker c1 s3">
+                <svg viewBox="0 0 24 24">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+            </div>
+            <div class="content">
+                <h3 class="rule-title">Participamos activamente.</h3>
+                <p class="consequence"><span class="arrow-icon">→</span> La no participación requiere recuperación en otra instancia.</p>
+            </div>
+        </div>
+
+        <!-- Norma 7 -->
+        <div class="rule-item">
+            <div class="art-marker c2 s1">
+                <svg viewBox="0 0 24 24">
+                    <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
+                </svg>
+            </div>
+            <div class="content">
+                <h3 class="rule-title">Nos desplazamos sin correr ni empujar.</h3>
+                <p class="consequence"><span class="arrow-icon">→</span> Si ocurre, se asigna ubicación fija en la sala.</p>
+            </div>
+        </div>
+
+        <!-- Norma 8 -->
+        <div class="rule-item">
+            <div class="art-marker c3 s4">
+                <svg viewBox="0 0 24 24">
+                    <path d="M18 11V6a2 2 0 0 0-4 0v4M14 11V4a2 2 0 0 0-4 0v7M10 11V5a2 2 0 0 0-4 0v9M6 14v-1a2 2 0 0 0-4 0v5a7 7 0 0 0 14 0v-7a2 2 0 0 0-4 0v3"></path>
+                </svg>
+            </div>
+            <div class="content">
+                <h3 class="rule-title">Pedimos la palabra levantando la mano.</h3>
+                <p class="consequence"><span class="arrow-icon">→</span> Si se interrumpe (o no se usa la señal), se pierde el turno de opinión.</p>
+            </div>
+        </div>
+
+        <!-- Norma 9 -->
+        <div class="rule-item">
+            <div class="art-marker c4 s3">
+                <svg viewBox="0 0 24 24">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+            </div>
+            <div class="content">
+                <h3 class="rule-title">Trabajamos en equipo con responsabilidad.</h3>
+                <p class="consequence"><span class="arrow-icon">→</span> Si el equipo no coopera, se reorganizan los roles.</p>
+            </div>
+        </div>
+
+        <!-- Norma 10 -->
+        <div class="rule-item">
+            <div class="art-marker c5 s1">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 3l1.912 5.813a2 2 0 001.275 1.275L21 12l-5.813 1.912a2 2 0 00-1.275 1.275L12 21l-1.912-5.813a2 2 0 00-1.275-1.275L3 12l5.813-1.912a2 2 0 001.275-1.275L12 3z"></path>
+                </svg>
+            </div>
+            <div class="content">
+                <h3 class="rule-title">Dejamos la sala mejor de como la encontramos.</h3>
+                <p class="consequence"><span class="arrow-icon">→</span> Si no se cumple, el grupo organiza antes de salir.</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const container = document.querySelector('.infographic-container');
+        
+        // Creamos la capa oscura para difuminar el fondo
+        const overlay = document.createElement('div');
+        overlay.className = 'modal-overlay';
+        
+        // Creamos el contenedor gigante de la regla
+        const modal = document.createElement('div');
+        modal.className = 'modal-content';
+        
+        container.appendChild(overlay);
+        container.appendChild(modal);
+        
+        // Seleccionamos todas las reglas
+        const rules = document.querySelectorAll('.rule-item');
+        
+        // Asignamos la acción al hacer clic a cada regla
+        rules.forEach(rule => {
+            rule.addEventListener('click', () => {
+                // Copia exactamente el contenido y el color de la regla clickeada
+                modal.innerHTML = rule.innerHTML;
+                
+                // Hace aparecer la regla en el centro
+                overlay.classList.add('active');
+                modal.classList.add('active');
+            });
+        });
+        
+        // Función para cerrar la vista gigante al hacer clic en cualquier lado
+        const closeModal = () => {
+            overlay.classList.remove('active');
+            modal.classList.remove('active');
+        };
+        
+        overlay.addEventListener('click', closeModal);
+        modal.addEventListener('click', closeModal);
+    });
+</script>
+
+</body>
+</html>
